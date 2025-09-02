@@ -124,15 +124,15 @@ contract CredentialRegistry {
         Credential storage c = _credentials[credentialId];
         if (c.issuer == address(0)) revert InvalidId();
 
-        // status curent: nerevocat si (neexpirat sau fara expirare)
+        
         if (c.revoked) revert AlreadyRevoked();
         if (c.expiresAt != 0 && c.expiresAt <= block.timestamp) revert InvalidExpiry();
 
-        // anti-replay (optional, dar activat aici)
+        
         if (usedPresentations[presentationHash]) revert ReplayDetected();
         usedPresentations[presentationHash] = true;
 
-        // verificare semnatura holder (subject) peste presentationHash (EIP-191 prefix)
+        
         address signer = _recoverEthSigned(presentationHash, signature);
         if (signer != c.subject) revert InvalidSignature();
 
@@ -174,3 +174,4 @@ contract CredentialRegistry {
     }
 
 }
+
