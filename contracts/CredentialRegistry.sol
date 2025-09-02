@@ -9,14 +9,14 @@ interface IIssuerRegistry {
 
 
 contract CredentialRegistry {
-    // --- Tipuri & evenimente ---
+    
     struct Credential {
         address issuer;
         address subject;
         bytes32 schemaId;
-        bytes32 dataHash;     // ancora VC off-chain
+        bytes32 dataHash;     
         uint256 issuedAt;
-        uint256 expiresAt;    // 0 => fara expirare
+        uint256 expiresAt;    
         bool    revoked;
     }
 
@@ -34,19 +34,19 @@ contract CredentialRegistry {
 
     event PresentationVerified(uint256 indexed id, address indexed verifier, uint256 timestamp);
 
-    error NotAuthorized();        // emitent neautorizat
-    error InvalidExpiry();        // expiresAt <= block.timestamp (cand != 0)
-    error NotIssuer();            // msg.sender != issuer al credentialului
-    error AlreadyRevoked();       // deja revocat
-    error InvalidSignature();     // semnatura VP invalida
-    error ReplayDetected();       // prezentare repetata (anti-replay)
-    error InvalidId();            // credential inexistent
+    error NotAuthorized();        
+    error InvalidExpiry();        
+    error NotIssuer();           
+    error AlreadyRevoked();     
+    error InvalidSignature();    
+    error ReplayDetected();      
+    error InvalidId();            
 
     
     IIssuerRegistry public immutable issuerRegistry;
 
     mapping(uint256 => Credential) private _credentials;
-    uint256 public nextId; // auto-increment
+    uint256 public nextId; 
 
     
     mapping(bytes32 => bool) public usedPresentations;
@@ -71,7 +71,7 @@ contract CredentialRegistry {
         if (expiresAt != 0 && expiresAt <= block.timestamp) revert InvalidExpiry();
         require(subject != address(0), "ZeroSubject");
         require(dataHash != bytes32(0), "ZeroHash");
-        // note: schemaId poate fi 0x0 daca se doreste; recomandat sa fie != 0
+        
 
         unchecked { id = ++nextId; }
         _credentials[id] = Credential({
@@ -172,4 +172,5 @@ contract CredentialRegistry {
         if (signer == address(0)) revert InvalidSignature();
         return signer;
     }
+
 }
